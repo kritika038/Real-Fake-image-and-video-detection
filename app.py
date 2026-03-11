@@ -22,6 +22,21 @@ detector = load_detector()
 st.title("AI Media Detector")
 st.write("Upload an image or video to classify it as fake or real.")
 
+mode_label = st.selectbox(
+    "Image detection mode",
+    options=["Balanced", "Strict Fake Detection"],
+    index=1,
+    help=(
+        "Balanced is safer for real photos. Strict Fake Detection is more "
+        "aggressive for suspicious images and is the current default."
+    ),
+)
+
+image_detection_mode = {
+    "Balanced": "balanced",
+    "Strict Fake Detection": "strict_fake_detection",
+}[mode_label]
+
 
 def render_result_card(result, media_type):
     prediction = result["prediction"]
@@ -60,6 +75,8 @@ def render_result_card(result, media_type):
 def render_image_result(result):
     render_result_card(result, "Image")
 
+    st.caption(f"Mode: {result.get('detection_mode', 'balanced')}")
+
     extra_cols = st.columns(2)
     if "sharpness_score" in result:
         extra_cols[0].metric("Sharpness Score", result["sharpness_score"])
@@ -93,6 +110,7 @@ with image_tab:
     )
 
     if uploaded_image is not None:
+        image_bytes = uploaded_image.getvalue()
         image = Image.open(uploaded_image)
         st.image(image, caption="Uploaded Image", use_container_width=True)
 
@@ -101,11 +119,15 @@ with image_tab:
 
             with st.spinner("Analyzing image..."):
                 try:
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp:
-                        image.save(tmp.name)
+                    suffix = os.path.splitext(uploaded_image.name)[1] or ".jpg"
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                        tmp.write(image_bytes)
                         temp_path = tmp.name
 
-                    result = detector.predict(temp_path)
+                    result = detector.predict(
+                        temp_path,
+                        detection_mode=image_detection_mode,
+                    )
                 finally:
                     if temp_path and os.path.exists(temp_path):
                         os.remove(temp_path)

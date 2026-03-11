@@ -40,7 +40,7 @@ def analyze_video(video_path, sample_every_n_frames=None):
                     temp_path = tmp.name
 
                 cv2.imwrite(temp_path, frame)
-                result = detector.predict(temp_path, apply_image_heuristics=False)
+                result = detector.predict(temp_path, apply_image_heuristics=True)
             finally:
                 if temp_path and os.path.exists(temp_path):
                     os.remove(temp_path)
@@ -68,15 +68,16 @@ def analyze_video(video_path, sample_every_n_frames=None):
 
     avg_fake = float(np.mean(fake_scores))
     avg_real = float(np.mean(real_scores))
+    suspicious_frames = sum(1 for item in timeline if item["prediction"] == "FAKE")
+    fake_ratio = suspicious_frames / analyzed_frames
+    real_ratio = 1 - fake_ratio
 
-    if avg_fake >= avg_real:
+    if fake_ratio >= 0.5:
         final_prediction = "FAKE"
-        confidence = avg_fake
+        confidence = fake_ratio * 100
     else:
         final_prediction = "REAL"
-        confidence = avg_real
-
-    suspicious_frames = sum(1 for item in timeline if item["prediction"] == "FAKE")
+        confidence = real_ratio * 100
 
     return {
         "prediction": final_prediction,

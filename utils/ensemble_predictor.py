@@ -17,7 +17,9 @@ class DeepfakeDetector:
 
     FAKE_CLASS_INDEX = 0
     REAL_CLASS_INDEX = 1
-    LOW_SHARPNESS_THRESHOLD = 60.0
+    LOW_SHARPNESS_THRESHOLD = 75.0
+    STRICT_NO_EXIF_SHARPNESS_THRESHOLD = 120.0
+    DETECTION_MODES = ("balanced", "strict_fake_detection")
 
     def __init__(self, model_path=None):
         if torch.cuda.is_available():
@@ -88,7 +90,18 @@ class DeepfakeDetector:
         except Exception:
             return 0
 
-    def predict(self, image_path, apply_image_heuristics=True):
+    def predict(
+        self,
+        image_path,
+        apply_image_heuristics=True,
+        detection_mode="balanced",
+    ):
+        if detection_mode not in self.DETECTION_MODES:
+            raise ValueError(
+                f"Unsupported detection mode: {detection_mode}. "
+                f"Expected one of {self.DETECTION_MODES}."
+            )
+
         image_tensor = self.preprocess(image_path)
 
         with torch.no_grad():
@@ -111,6 +124,7 @@ class DeepfakeDetector:
             "fake_probability": round(fake_prob * 100, 2),
             "real_probability": round(real_prob * 100, 2),
             "model_path": self.model_path,
+            "detection_mode": detection_mode,
         }
 
         sharpness = self.sharpness_score(image_path)
@@ -132,15 +146,18 @@ class DeepfakeDetector:
 
         if (
             apply_image_heuristics
+            and detection_mode == "strict_fake_detection"
             and result["prediction"] == "REAL"
             and exif_entries == 0
+            and sharpness is not None
+            and sharpness < self.STRICT_NO_EXIF_SHARPNESS_THRESHOLD
         ):
             result["prediction"] = "FAKE"
             result["confidence_percent"] = max(
                 result["confidence_percent"],
                 80.0,
             )
-            result["heuristic_override"] = "no_exif"
+            result["heuristic_override"] = "no_exif_strict_mode"
 
         return result
 
