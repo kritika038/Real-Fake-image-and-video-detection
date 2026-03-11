@@ -124,10 +124,15 @@ with image_tab:
                         tmp.write(image_bytes)
                         temp_path = tmp.name
 
-                    result = detector.predict(
-                        temp_path,
-                        detection_mode=image_detection_mode,
-                    )
+                    try:
+                        result = detector.predict(
+                            temp_path,
+                            detection_mode=image_detection_mode,
+                        )
+                    except TypeError:
+                        # Backward compatibility for deployments still loading
+                        # an older detector signature during refresh.
+                        result = detector.predict(temp_path)
                 finally:
                     if temp_path and os.path.exists(temp_path):
                         os.remove(temp_path)
