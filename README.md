@@ -2,6 +2,11 @@
 
 This project classifies uploaded images and videos as `FAKE` or `REAL`.
 
+## Links
+
+- GitHub Repository: `https://github.com/kritika038/Real-Fake-image-and-video-detection`
+- Live App: `https://real-fake-image-and-video-detection-e7pum2tuwtmhjhsk3yfpwe.streamlit.app/`
+
 ## What this repo contains
 
 - `app.py`: main Streamlit interface
@@ -23,8 +28,8 @@ This project classifies uploaded images and videos as `FAKE` or `REAL`.
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
-cd agentic_ai_detector_v2
+git clone https://github.com/kritika038/Real-Fake-image-and-video-detection.git
+cd Real-Fake-image-and-video-detection
 ```
 
 ### 2. Create a virtual environment
