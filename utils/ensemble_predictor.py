@@ -19,6 +19,8 @@ class DeepfakeDetector:
     REAL_CLASS_INDEX = 1
     LOW_SHARPNESS_THRESHOLD = 75.0
     STRICT_NO_EXIF_SHARPNESS_THRESHOLD = 120.0
+    REAL_CAMERA_EXIF_THRESHOLD = 5
+    REAL_CAMERA_SHARPNESS_THRESHOLD = 100.0
     DETECTION_MODES = ("balanced", "strict_fake_detection")
 
     def __init__(self, model_path=None):
@@ -158,6 +160,19 @@ class DeepfakeDetector:
                 80.0,
             )
             result["heuristic_override"] = "no_exif_strict_mode"
+
+        if (
+            apply_image_heuristics
+            and exif_entries >= self.REAL_CAMERA_EXIF_THRESHOLD
+            and sharpness is not None
+            and sharpness >= self.REAL_CAMERA_SHARPNESS_THRESHOLD
+        ):
+            result["prediction"] = "REAL"
+            result["confidence_percent"] = max(
+                result["confidence_percent"],
+                85.0,
+            )
+            result["heuristic_override"] = "camera_exif_real"
 
         return result
 
