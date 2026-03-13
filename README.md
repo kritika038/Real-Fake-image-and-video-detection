@@ -6,7 +6,7 @@ This project classifies uploaded images and videos as `FAKE` or `REAL`.
 
 - GitHub Repository: `https://github.com/kritika038/Real-Fake-image-and-video-detection`
 - Website: `https://kritika038.github.io/Real-Fake-image-and-video-detection/`
-- Live App: `https://real-fake-image-and-video-detection-e7pum2tuwtmhjhsk3yfpwe.streamlit.app/`
+- Live App: `https://real-fake-image-and-video-detection-vh46swgmkisxfqjvys58bd.streamlit.app/`
 - Website Source: `docs/index.html` for free GitHub Pages hosting
 
 If the Streamlit live app shows a sleep screen, click `Yes, get this app back up!` and wait a few moments for it to wake up.
