@@ -6,6 +6,7 @@ This project classifies uploaded images and videos as `FAKE` or `REAL`.
 
 - GitHub Repository: `https://github.com/kritika038/Real-Fake-image-and-video-detection`
 - Live App: `https://real-fake-image-and-video-detection-e7pum2tuwtmhjhsk3yfpwe.streamlit.app/`
+- Website Source: `docs/index.html` for free GitHub Pages hosting
 
 ## What this repo contains
 
@@ -114,3 +115,45 @@ So someone downloading the repo gets only the code and required model weights fo
 6. Deploy
 
 After deployment, Streamlit gives a public link that opens the running interface directly.
+
+## Create a real public website for free
+
+This repo now includes a static website in `docs/` so you can publish a proper homepage with GitHub Pages.
+
+### Why this helps
+
+- The website can be indexed by Google
+- Visitors get a professional landing page first
+- The page links to your live Streamlit detector
+- GitHub Pages hosting is free
+
+### Deploy the website with GitHub Pages
+
+1. Push this repo to GitHub.
+2. Open the repository on GitHub.
+3. Go to `Settings` -> `Pages`.
+4. Under `Build and deployment`, choose:
+   - `Source`: `Deploy from a branch`
+   - `Branch`: `main`
+   - `Folder`: `/docs`
+5. Save.
+
+GitHub will publish the site at a URL similar to:
+
+```text
+https://kritika038.github.io/Real-Fake-image-and-video-detection/
+```
+
+### Exact git commands
+
+```bash
+git add docs/index.html docs/styles.css docs/robots.txt docs/sitemap.xml README.md
+git commit -m "Add public website landing page"
+git push origin main
+```
+
+### Important note
+
+- The website in `docs/` stays awake and public.
+- Your Streamlit detector may still sleep on the free tier after inactivity.
+- This setup is still useful because people can find your website on Google and then click into the detector.

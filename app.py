@@ -98,7 +98,7 @@ def render_video_result(result):
     if timeline:
         with st.expander("Frame-by-frame analysis"):
             frame_df = pd.DataFrame(timeline)
-            st.dataframe(frame_df, use_container_width=True, hide_index=True)
+            st.dataframe(frame_df, width="stretch", hide_index=True)
 
 image_tab, video_tab = st.tabs(["Image Detection", "Video Detection"])
 
@@ -112,7 +112,7 @@ with image_tab:
     if uploaded_image is not None:
         image_bytes = uploaded_image.getvalue()
         image = Image.open(uploaded_image)
-        st.image(image, caption="Uploaded Image", use_container_width=True)
+        st.image(image, caption="Uploaded Image", width="stretch")
 
         if st.button("Run Image Detection"):
             temp_path = None

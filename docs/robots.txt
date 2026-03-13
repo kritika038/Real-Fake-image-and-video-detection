@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kritika038.github.io/Real-Fake-image-and-video-detection/sitemap.xml
