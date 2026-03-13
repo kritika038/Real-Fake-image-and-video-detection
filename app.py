@@ -44,6 +44,17 @@ def render_result_card(result, media_type):
     fake_probability = result["fake_probability"]
     real_probability = result["real_probability"]
 
+    # Heuristic overrides can change the final verdict after the raw model
+    # probabilities are computed. Keep the displayed percentages aligned with
+    # the final shown label.
+    if result.get("heuristic_override"):
+        if prediction == "FAKE":
+            fake_probability = confidence
+            real_probability = round(100.0 - confidence, 2)
+        else:
+            real_probability = confidence
+            fake_probability = round(100.0 - confidence, 2)
+
     if prediction == "REAL":
         badge_color = "#1f7a1f"
         label = "Likely Real"
