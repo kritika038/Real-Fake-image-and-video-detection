@@ -10,6 +10,7 @@ This project classifies uploaded images and videos as `FAKE` or `REAL`.
 - Website Source: `docs/index.html` for free GitHub Pages hosting
 
 If the Streamlit live app shows a sleep screen, click `Yes, get this app back up!` and wait a few moments for it to wake up.
+If you see an old Streamlit `share.streamlit.io/app/...` link, do not use it. The current public app is the `vh46swgmkisxfqjvys58bd` URL above.
 
 ## What this repo contains
 

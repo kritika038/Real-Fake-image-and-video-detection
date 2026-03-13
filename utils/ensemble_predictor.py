@@ -92,6 +92,26 @@ class DeepfakeDetector:
         except Exception:
             return 0
 
+    def _apply_prediction_override(
+        self,
+        result,
+        prediction,
+        confidence_percent,
+        heuristic_name,
+    ):
+        """Keep displayed probabilities aligned with heuristic-adjusted output."""
+        confidence_percent = round(float(confidence_percent), 2)
+        result["prediction"] = prediction
+        result["confidence_percent"] = confidence_percent
+        result["heuristic_override"] = heuristic_name
+
+        if prediction == "FAKE":
+            result["fake_probability"] = confidence_percent
+            result["real_probability"] = round(100.0 - confidence_percent, 2)
+        else:
+            result["real_probability"] = confidence_percent
+            result["fake_probability"] = round(100.0 - confidence_percent, 2)
+
     def predict(
         self,
         image_path,
@@ -139,12 +159,12 @@ class DeepfakeDetector:
                 prediction == "REAL"
                 and sharpness < self.LOW_SHARPNESS_THRESHOLD
             ):
-                result["prediction"] = "FAKE"
-                result["confidence_percent"] = round(
-                    max(confidence * 100, 75.0),
-                    2,
+                self._apply_prediction_override(
+                    result,
+                    prediction="FAKE",
+                    confidence_percent=max(confidence * 100, 75.0),
+                    heuristic_name="low_sharpness",
                 )
-                result["heuristic_override"] = "low_sharpness"
 
         if (
             apply_image_heuristics
@@ -154,12 +174,12 @@ class DeepfakeDetector:
             and sharpness is not None
             and sharpness < self.STRICT_NO_EXIF_SHARPNESS_THRESHOLD
         ):
-            result["prediction"] = "FAKE"
-            result["confidence_percent"] = max(
-                result["confidence_percent"],
-                80.0,
+            self._apply_prediction_override(
+                result,
+                prediction="FAKE",
+                confidence_percent=max(result["confidence_percent"], 80.0),
+                heuristic_name="no_exif_strict_mode",
             )
-            result["heuristic_override"] = "no_exif_strict_mode"
 
         if (
             apply_image_heuristics
@@ -167,12 +187,12 @@ class DeepfakeDetector:
             and sharpness is not None
             and sharpness >= self.REAL_CAMERA_SHARPNESS_THRESHOLD
         ):
-            result["prediction"] = "REAL"
-            result["confidence_percent"] = max(
-                result["confidence_percent"],
-                85.0,
+            self._apply_prediction_override(
+                result,
+                prediction="REAL",
+                confidence_percent=max(result["confidence_percent"], 85.0),
+                heuristic_name="camera_exif_real",
             )
-            result["heuristic_override"] = "camera_exif_real"
 
         return result
 
